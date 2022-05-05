@@ -1,3 +1,40 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
 body {
-	background-color: rgb(245, 255, 233);
+	background-color: #fff2f2;
+	font-family: 'Helvetica', sans-serif;
+}
+
+.wrapper {
+	margin: 0 auto;
+	width: 700px;
+}
+
+.task {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.description {
+	margin: 10px 0px 10px;
+	font-weight: 600;
+}
+
+.text-area {
+	width: 100%;
+	min-height: 250px;
+	padding: 10px;
+	font-size: 20px;
+	margin-bottom: 15px;
+}
+
+.keybord-area {
+	position: relative;
+	background-color: rgb(185, 185, 185);
+	border-radius: 10px;
+	padding: 10px;
 }
