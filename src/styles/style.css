@@ -79,26 +79,38 @@ body {
 	width: 80px;
 	font-size: 12px;
 	padding-top: 30px;
+	padding-right: 40px;
 }
 
 .caps-lock {
 	width: 90px;
 	font-size: 12px;
 	padding-top: 30px;
+	padding-right: 18px;
 }
 
 .enter {
 	width: 100px;
 	font-size: 12px;
 	padding-top: 30px;
+	padding-left: 45px;
 }
 
-.shift-left,
+.shift-left {
+	width: 120px;
+	font-size: 12px;
+	padding-top: 30px;
+	padding-right: 70px;
+}
+
 .shift-right {
 	width: 120px;
 	font-size: 12px;
 	padding-top: 30px;
+	padding-left: 70px;
 }
+
+
 
 .cmd-left,
 .cmd-right {
@@ -134,6 +146,14 @@ body {
 .control {
 	font-size: 12px;
 	padding-top: 30px;
+}
+
+.option-left {
+	padding-left: 10px;
+}
+
+.option-right {
+	padding-left: 10px;
 }
 
 .arrow-left,
