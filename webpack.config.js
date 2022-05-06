@@ -2,7 +2,8 @@ const path = require('path');  // подключение библиотеки п
 const HtmlWebpackPlugin = require("html-webpack-plugin");   // для работы с HLML
 const CopyWebpackPlugin = require('copy-webpack-plugin');    // подключение файлов (ico например)
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');  // для очистки вебпака от лишних файлов
-const MiniCssExtractPlugin = require('mini-css-extract-plugin') // сжатие файлов
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // сжатие файлов
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 
 module.exports = {
@@ -25,6 +26,9 @@ module.exports = {
 		new HtmlWebpackPlugin({                          //  для работы с HTML
 			filename: 'index.html',													// имя сбилденного нового файла
 			template: './index.html',												// путь и имя шаблона с которого начинается сборка
+		}),
+		new ESLintPlugin({
+			extensions: ['js']
 		}),
 		new CleanWebpackPlugin(),                         // очистка лищних файлов вебпака
     new CopyWebpackPlugin({														// добавление файлов в сборку
@@ -83,7 +87,17 @@ module.exports = {
 			{
         test: /\.js$/,																		// eslint
         exclude: /node_modules/,
-        use: ['eslint-loader']
+        use: [
+					{
+						loader: 'eslint-loader',
+						options: {
+							fix: true,
+							eslintPath: 'eslint',
+							emitError: true,
+							emitWarning: true
+							},
+					},
+				]
       },
 		],
 	},
@@ -93,3 +107,18 @@ module.exports = {
   },
 
 } 
+
+
+
+
+// {
+// 	loader: 'eslint-loader',
+// 	options: {
+// 		fix: true,
+// 		eslintPath: 'eslint',
+// 		emitError: true,
+// 		emitWarning: true
+// 		},
+// },
+
+// eslintrcFile
