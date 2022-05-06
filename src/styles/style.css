@@ -63,11 +63,7 @@ body {
 .key-press {
 	background-color:  rgb(41, 41, 41);
 	border: solid 1px #fff2f2;
-	/* height: 40px;
-	width: 40px; */
 }
-
-/* special keys*/
 
 .backspace {
 	width: 80px;
@@ -110,14 +106,11 @@ body {
 	padding-left: 70px;
 }
 
-
-
 .cmd-left,
 .cmd-right {
 	width: 60px;
 	font-size: 12px;
 	padding-top: 30px;
-
 }
 
 .space {
@@ -142,6 +135,16 @@ body {
   padding-top: inherit;
 }
 
+.arrow-left,
+.arrow-right {
+	padding-top: 15px;
+  padding-left: 20px;
+}
+
+.arrow-right {
+	transform: rotate(180deg);
+}
+
 .option,
 .control {
 	font-size: 12px;
@@ -155,18 +158,6 @@ body {
 .option-right {
 	padding-left: 10px;
 }
-
-.arrow-left,
-.arrow-right {
-	padding-top: 15px;
-  padding-left: 20px;
-}
-
-
-.arrow-right {
-	transform: rotate(180deg);
-}
-
 
 
 
