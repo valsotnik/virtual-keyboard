@@ -111,14 +111,3 @@ module.exports = {
 
 
 
-// {
-// 	loader: 'eslint-loader',
-// 	options: {
-// 		fix: true,
-// 		eslintPath: 'eslint',
-// 		emitError: true,
-// 		emitWarning: true
-// 		},
-// },
-
-// eslintrcFile
