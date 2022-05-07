@@ -84,19 +84,38 @@ function fillButtons (data){
     }
 }
 
-// take from localStorage
-// let lang
-let currentLanguage = JSON.parse(localStorage.getItem('lang'))
 
-// (!languageStorage) ? (currentLanguage = enLowercaseArray) : (currentLanguage = JSON.parse(localStorage.getItem('lang')));
+let currentLanguage = JSON.parse(localStorage.getItem('lang'));
 
-//  currentLanguage = enLowercaseArray;
-let languageStorage = [...currentLanguage];
-localStorage.setItem('lang', JSON.stringify(languageStorage));
+if (!currentLanguage) {
+	currentLanguage = [...enLowercaseArray];
+}
 
-// let language = JSON.parse(localStorage.getItem('lang'));
+localStorage.setItem('lang', JSON.stringify(currentLanguage));
 
-(!languageStorage) ? fillButtons(enLowercaseArray) : fillButtons(languageStorage);
+
+fillButtons(currentLanguage);
+
+
+let currentCase = JSON.parse(localStorage.getItem('case'));
+
+if (!currentCase) {
+	currentCase = [...currentLanguage];
+}
+localStorage.setItem('case', JSON.stringify(currentCase));
+
+let capsLockPressed = JSON.parse(localStorage.getItem('caps-press'));
+
+if (!capsLockPressed) {
+	capsLockPressed = false;
+}
+
+localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));
+
+
+
+
+
 
 
 let backspace = keys[13];
@@ -105,6 +124,7 @@ let tab = keys[14];
 tab.classList.add('tab');
 let capsLock = keys[28];
 capsLock.classList.add('caps-lock', 'additional');
+capsLockPressed ? capsLock.classList.add('key-press') : capsLock.classList.remove('key-press');
 let enter = keys[40];
 enter.classList.add('enter');
 let shiftLeft = keys[41];
@@ -190,25 +210,45 @@ function shiftLowerCase(event) {
 function capsLockCase(event) {
 	
 	if (event.code === 'CapsLock') {
+
+
+
 		if (!event.getModifierState('CapsLock')) {
 			capsLock.classList.toggle('key-press');
+			capsLockPressed = false;
+			localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));		
 			if (keys[15].innerHTML === 'Q') {
-				fillButtons(enLowercaseArray);
+				currentCase = [...enLowercaseArray];
+				fillButtons(currentCase);
+				localStorage.setItem('case', JSON.stringify(currentCase)); 
+				localStorage.setItem('lang', JSON.stringify(currentCase)); 
 			}
 			if (keys[15].innerHTML === 'Й') {
-				fillButtons(ruLowercase);
+				currentCase = [...ruLowercase];
+				fillButtons(currentCase);
+				localStorage.setItem('case', JSON.stringify(currentCase)); 
+				localStorage.setItem('lang', JSON.stringify(currentCase)); 
 			}
 		}
 
 		if (event.getModifierState('CapsLock')) {
 			capsLock.classList.toggle('key-press');
+			capsLockPressed = true;
+			localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));
 			if (keys[15].innerHTML === 'q') {
-				fillButtons(enUppercase) 
+				currentCase = [...enUppercase];
+				fillButtons(currentCase);
+				localStorage.setItem('case', JSON.stringify(currentCase)); 
+				localStorage.setItem('lang', JSON.stringify(currentCase)); 
 			}
 			if (keys[15].innerHTML === 'й') {
-				fillButtons(ruUppercase)
+				currentCase = [...ruUppercase];
+				fillButtons(currentCase);
+				localStorage.setItem('case', JSON.stringify(currentCase)); 
+				localStorage.setItem('lang', JSON.stringify(currentCase)); 
 			}
 		}
+
 
 
 
@@ -277,6 +317,29 @@ function capsLockCase(event) {
 
 
 }
+
+function changeLanguage(event) {
+	if (event.code === 'Space') {
+		if (keys[15].innerHTML === 'q') {
+
+						// localStorage.clear();
+						currentLanguage = [...ruLowercase];
+						localStorage.setItem('lang', JSON.stringify(currentLanguage));
+						// language = JSON.parse(localStorage.getItem(lang));
+						fillButtons(currentLanguage);
+				
+		} else {
+
+						// localStorage.clear();
+						currentLanguage = [...enLowercaseArray];
+						localStorage.setItem('lang', JSON.stringify(currentLanguage));
+						// language = JSON.parse(localStorage.getItem(lang));
+						fillButtons(currentLanguage);
+		}
+	}
+}
+
+
 // check event function
 function check(event) {
 	console.log(event);
@@ -284,10 +347,16 @@ function check(event) {
 	console.log(event.code);
 	console.log(event.getModifierState('CapsLock'));
 }
+
+
+
+
+
 document.addEventListener('keydown', check);
 
 
 document.addEventListener('keydown', (event) => {
+	changeLanguage(event);
 	lightButtons(event);
 	shiftUpperCase(event);
 	capsLockCase(event);
@@ -295,26 +364,6 @@ document.addEventListener('keydown', (event) => {
 	if (event.code === 'Tab') {
 		event.preventDefault();	
 	}
-
-	if (event.code === 'Space') {
-			if (keys[15].innerHTML === 'q') {
-
-							// localStorage.clear();
-							languageStorage = [...ruLowercase];
-							localStorage.setItem('lang', JSON.stringify(languageStorage));
-							// language = JSON.parse(localStorage.getItem(lang));
-							fillButtons(languageStorage);
-					
-			} else {
-
-							// localStorage.clear();
-							languageStorage = [...enLowercaseArray];
-							localStorage.setItem('lang', JSON.stringify(languageStorage));
-							// language = JSON.parse(localStorage.getItem(lang));
-							fillButtons(languageStorage);
-			}
-		}
-
 	}
 );
 
