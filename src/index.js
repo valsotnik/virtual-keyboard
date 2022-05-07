@@ -6,7 +6,7 @@ const wrapper = document.createElement('div');
 wrapper.classList.add('wrapper');
 body.append(wrapper);
 wrapper.insertAdjacentHTML('afterbegin', '<h1 class="task">Virtual Keyboard</h1>');
-wrapper.insertAdjacentHTML('beforeend', '<p class="description">Change language -  Command + Space. The keyboard was made in the MacOs system.</p>');
+wrapper.insertAdjacentHTML('beforeend', '<p class="description">Change language -  Ctrl + Option. The keyboard was made in the MacOs system.</p>');
 wrapper.insertAdjacentHTML('beforeend', '<textarea autofocus placeholder="Text here..." class="text-area"  autofocus></textarea>');
 wrapper.insertAdjacentHTML('beforeend', '<div class="keyboard"></div>');
 
@@ -124,7 +124,7 @@ let tab = keys[14];
 tab.classList.add('tab');
 let capsLock = keys[28];
 capsLock.classList.add('caps-lock', 'additional');
-capsLockPressed ? capsLock.classList.add('key-press') : capsLock.classList.remove('key-press');
+(capsLockPressed === true) ? capsLock.classList.add('key-press') : capsLock.classList.remove('key-press');
 let enter = keys[40];
 enter.classList.add('enter');
 let shiftLeft = keys[41];
@@ -211,8 +211,6 @@ function capsLockCase(event) {
 	
 	if (event.code === 'CapsLock') {
 
-
-
 		if (!event.getModifierState('CapsLock')) {
 			capsLock.classList.toggle('key-press');
 			capsLockPressed = false;
@@ -248,94 +246,53 @@ function capsLockCase(event) {
 				localStorage.setItem('lang', JSON.stringify(currentCase)); 
 			}
 		}
-
-
-
-
-
-
-
-
-
-
-		// (capsLock.classList.contains('key-press')) ? capsLock.classList.remove('key-press'): capsLock.classList.add('key-press');
-		// // capsLock.classList.toggle('key-press');
-		// if (capsLock.classList.contains('key-press')) {
-		// 	if (keys[15].innerHTML === 'q') {
-		// 		fillButtons(enUppercase) 
-		// 	}
-		// 	if (keys[15].innerHTML === 'й') {
-		// 		fillButtons(ruUppercase)
-		// 	}
-		// };
-		// if (!capsLock.classList.contains('key-press')) {
-			
-		// 	if (keys[15].innerHTML === 'Q') {
-		// 		fillButtons(enLowercaseArray);
-		// 	}
-		// 	if (keys[15].innerHTML === 'Й') {
-		// 		fillButtons(ruLowercase);
-		// 	}
-		// }
 		
-}
-
-
-
-// 	if (event.code === 'CapsLock') {
-// 		event.preventDefault();
-// 		console.log('eeeee');
-// 		if (event.getModifierState('CapsLock'))
-
-
-
-
-
-
-		
-// 		(capsLock.classList.contains('key-press')) ? capsLock.classList.remove('key-press'): capsLock.classList.add('key-press');
-// 		// capsLock.classList.toggle('key-press');
-// 		if (capsLock.classList.contains('key-press')) {
-// 			if (keys[15].innerHTML === 'q') {
-// 				fillButtons(enUppercase) 
-// 			}
-// 			if (keys[15].innerHTML === 'й') {
-// 				fillButtons(ruUppercase)
-// 			}
-// 		};
-// 		if (!capsLock.classList.contains('key-press')) {
-			
-// 			if (keys[15].innerHTML === 'Q') {
-// 				fillButtons(enLowercaseArray);
-// 			}
-// 			if (keys[15].innerHTML === 'Й') {
-// 				fillButtons(ruLowercase);
-// 			}
-// 		}
-		
-// }
-
+	}
 
 }
 
 function changeLanguage(event) {
-	if (event.code === 'Space') {
+
+	if ((event.ctrlKey) && (event.altKey)) {
+		// event.preventDefault();
 		if (keys[15].innerHTML === 'q') {
 
-						// localStorage.clear();
 						currentLanguage = [...ruLowercase];
 						localStorage.setItem('lang', JSON.stringify(currentLanguage));
-						// language = JSON.parse(localStorage.getItem(lang));
+						localStorage.setItem('case', JSON.stringify(currentLanguage));
+						capsLockPressed = false;
+						localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));
 						fillButtons(currentLanguage);
 				
-		} else {
+		} else if (keys[15].innerHTML === 'й') {
 
-						// localStorage.clear();
 						currentLanguage = [...enLowercaseArray];
 						localStorage.setItem('lang', JSON.stringify(currentLanguage));
-						// language = JSON.parse(localStorage.getItem(lang));
+						localStorage.setItem('case', JSON.stringify(currentLanguage));
+						capsLockPressed = false;
+						localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));
 						fillButtons(currentLanguage);
 		}
+
+		if (keys[15].innerHTML === 'Q') {
+
+			currentLanguage = [...ruUppercase];
+			localStorage.setItem('lang', JSON.stringify(currentLanguage));
+			localStorage.setItem('case', JSON.stringify(currentLanguage));
+			capsLockPressed = true;
+			localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));
+			fillButtons(currentLanguage);
+	
+		} else if (keys[15].innerHTML === 'Й') {
+
+					currentLanguage = [...enUppercase];
+					localStorage.setItem('lang', JSON.stringify(currentLanguage));
+					localStorage.setItem('case', JSON.stringify(currentLanguage));
+					capsLockPressed = true;
+					localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));
+					fillButtons(currentLanguage);
+		}
+
 	}
 }
 
@@ -349,7 +306,7 @@ function check(event) {
 }
 
 
-
+// document.addEventListener('keypress', changeLanguage)
 
 
 document.addEventListener('keydown', check);
@@ -363,6 +320,11 @@ document.addEventListener('keydown', (event) => {
 
 	if (event.code === 'Tab') {
 		event.preventDefault();	
+		let cursorPosition = textArea.selectionStart;
+		let beforeText = textArea.value.slice(0, cursorPosition);
+		let afterText = textArea.value.slice(cursorPosition);
+		textArea.value = `${beforeText}\t${afterText}`;
+		cursorPosition += 1;
 	}
 	}
 );
@@ -383,22 +345,61 @@ keyboard.addEventListener('click', virtualKeyboardInput);
 
 function virtualKeyboardInput(event){
     
-   
+		if (event.target.classList.contains('caps-lock')) {
+			
+			if (!event.target.classList.contains('key-press')) {
+				capsLock.classList.add('key-press');
+				capsLockPressed = true;
+				localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));		
+				if (keys[15].innerHTML === 'q') {
+					currentCase = [...enUppercase];
+					fillButtons(currentCase);
+					localStorage.setItem('case', JSON.stringify(currentCase)); 
+					localStorage.setItem('lang', JSON.stringify(currentCase)); 
+				}
+				if (keys[15].innerHTML === 'й') {
+					currentCase = [...ruUppercase];
+					fillButtons(currentCase);
+					localStorage.setItem('case', JSON.stringify(currentCase)); 
+					localStorage.setItem('lang', JSON.stringify(currentCase)); 
+				}
+			} else 	{
+				if (event.target.classList.contains('caps-lock')) {
+					if (event.target.classList.contains('key-press')) {
+						capsLock.classList.remove('key-press');
+						capsLockPressed = false;
+						localStorage.setItem('caps-press', JSON.stringify(capsLockPressed));
+						if (keys[15].innerHTML === 'Q') {
+							currentCase = [...enLowercaseArray];
+							fillButtons(currentCase);
+							localStorage.setItem('case', JSON.stringify(currentCase)); 
+							localStorage.setItem('lang', JSON.stringify(currentCase)); 
+						}
+						if (keys[15].innerHTML === 'Й') {
+							currentCase = [...ruLowercase];
+							fillButtons(currentCase);
+							localStorage.setItem('case', JSON.stringify(currentCase)); 
+							localStorage.setItem('lang', JSON.stringify(currentCase)); 
+						}
+					}
+				}
+
+			}
+			
+			
+
+			
+		}
 
   let cursorPosition = textArea.selectionStart;
-  const cursorPositionEnd = textArea.selectionEnd;
-  const beforeText = textArea.value.slice(0, cursorPosition);
-  const afterText = textArea.value.slice(cursorPosition);
+  let cursorPositionEnd = textArea.selectionEnd;
+  let beforeText = textArea.value.slice(0, cursorPosition);
+  let afterText = textArea.value.slice(cursorPosition);
 
-  console.log(cursorPosition);
-
-    if (event.target.tagName === 'BUTTON' && event.target.classList.contains('additional') === false){
+    if (event.target.tagName === 'BUTTON' && event.target.classList.contains('additional') === false) {
         textArea.value += event.target.innerHTML
         cursorPosition += 1;
     }
-
-
-
 
     if (event.target.classList.contains('enter')) {
         textArea.value = `${beforeText}\n${afterText}`;
@@ -411,22 +412,18 @@ function virtualKeyboardInput(event){
     }
 
     if (event.target.classList.contains('arrow-up')) {
-        textArea.value = `${beforeText}${afterText}`;
-        cursorPosition += 1;
+        cursorPosition -= 5;
     }
 
     if (event.target.classList.contains('arrow-down')) {
-        textArea.value = `${beforeText}${afterText}`;
-        cursorPosition += 1;
+        cursorPosition += 5;
     }
 
     if (event.target.classList.contains('arrow-left')) {
-        textArea.value = `${beforeText}${afterText}`;
-        cursorPosition += 1;
+        cursorPosition -= 1;
     }
 
     if (event.target.classList.contains('arrow-right')) {
-        textArea.value = `${beforeText}${afterText}`;
         cursorPosition += 1;
     }
 
@@ -439,40 +436,20 @@ function virtualKeyboardInput(event){
           }
     }
 
-    textArea.blur();
-    textArea.focus();
     textArea.selectionStart = cursorPosition;
     textArea.selectionEnd = cursorPosition;
+
+    textArea.blur();
+    textArea.focus();
 }
 
 keyboard.addEventListener('mousedown', virtualKeyboardPress);
 
 function virtualKeyboardPress(event) {
 
-    // if (event.target.classList.contains('capsLock')){
-    //     if (event.target.classList.contains('key-press')){
-    //         event.target.classList.remove('key-press')
-    //         if(keys[0].innerHTML === '~'){
-    //             fillButtons
-	// (enLowercaseArray)
-    //         } else {
-    //             fillButtons
-	// (ruLowercase)
-    //         }
-    //     } else {
-    //         ifevent.target.classList.add('key-press')
-    //         if(keys[0].innerHTML === '`'){
-    //             fillButtons
-	// (enUppercase)
-    //         } else {
-    //             fillButtons
-	// (ruUppercase)
-    //         }
-    //     }
-    // } else
     if (event.target.classList.contains('shift')) {
         event.target.classList.add('key-press');
-        if(keys[0].innerHTML === '`'){
+        if(keys[15].innerHTML === 'q'){
             fillButtons
 					(enUppercase)
         } else {
@@ -483,22 +460,41 @@ function virtualKeyboardPress(event) {
     } else
 
     if (event.target.tagName === 'BUTTON'){
+			if (event.target.classList.contains('capsLock')){
+				return
+		}
         event.target.classList.add('key-press')
     }
 
-		if (event.code == 'ShiftLeft' || event.code == 'ShiftRight') {		 
-			(keys[0].innerHTML === '`') ? fillButtons(enUppercase) : fillButtons(ruUppercase);		 
+		if (event.code == 'ShiftLeft' || event.code == 'ShiftRight') {	
+			if (keys[15].innerHTML === 'q') {
+				fillButtons(enUppercase) 
+			}
+
+			if (keys[15].innerHTML === 'й') {
+				fillButtons(ruUppercase);		
+			}
+
+			if (keys[15].innerHTML === 'Q') {
+				fillButtons(enLowercaseArray) 
+			}
+
+			if (keys[15].innerHTML === 'Й') {
+				fillButtons(ruLowercase)
+			}
+			
+			// (keys[15].innerHTML === 'q') ? fillButtons(enUppercase) : fillButtons(ruUppercase);		 
 		}
 
 }
 
-keyboard.addEventListener('mouseup', virtualKeyboardRelease);
+keyboard.addEventListener('mouseup', virtualKeyboardOut);
 
-function virtualKeyboardRelease(event) {
+function virtualKeyboardOut(event) {
 
     if (event.target.classList.contains('shift')) {
         event.target.classList.remove('key-press');
-        if(keys[0].innerHTML === '~'){
+        if(keys[15].innerHTML === 'Q'){
             fillButtons
 					(enLowercaseArray)
         } else {
@@ -508,20 +504,32 @@ function virtualKeyboardRelease(event) {
     
     } else
 
-    if(event.target.tagName === 'BUTTON') {
-        // if (event.target.classList.contains('capsLock')){
-        //     return
-        // }
-      event.target.classList.remove('key-press')
+    if (event.target.tagName === 'BUTTON') {
+        if (event.target.classList.contains('capsLock')){
+            return
+        }
+      event.target.classList.remove('key-press');
     }
 
 		if (event.code == 'ShiftLeft' || event.code == 'ShiftRight' ) {
-			
-			(keys[0].innerHTML === '~') ? fillButtons(enLowercaseArray) : fillButtons(ruLowercase);
+			if (keys[15].innerHTML === 'Q') {
+				fillButtons(enLowercaseArray) 
+			}
+
+			if (keys[15].innerHTML === 'Й') {
+				fillButtons(ruLowercase)
+			}
+
+			if (keys[15].innerHTML === 'q') {
+				fillButtons(enUppercase) 
+			}
+
+			if (keys[15].innerHTML === 'й') {
+				fillButtons(ruUppercase);		
+			}
+
+			// (keys[15].innerHTML === 'Q') ? fillButtons(enLowercaseArray) : fillButtons(ruLowercase);
 				
 		}
     
 }
-
-
-
