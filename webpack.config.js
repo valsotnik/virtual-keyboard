@@ -100,6 +100,6 @@ module.exports = {
   },
   devServer: { // для работы в режиме live-server
     static: './dist',
-    port: 3004,
+    port: 3006,
   },
 };
