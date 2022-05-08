@@ -1,4 +1,4 @@
-// import './styles/style.css';
+import './styles/style.css';
 
 const { body } = document;
 const wrapper = document.createElement('div');
@@ -79,7 +79,7 @@ function fillButtons(data) {
     keys[i].innerHTML = data[i];
   }
 }
-
+// language from localstorage
 let currentLanguage = JSON.parse(localStorage.getItem('lang'));
 
 if (!currentLanguage) {
@@ -89,14 +89,14 @@ if (!currentLanguage) {
 localStorage.setItem('lang', JSON.stringify(currentLanguage));
 
 fillButtons(currentLanguage);
-
+// case from local storage
 let currentCase = JSON.parse(localStorage.getItem('case'));
 
 if (!currentCase) {
   currentCase = [...currentLanguage];
 }
 localStorage.setItem('case', JSON.stringify(currentCase));
-
+// capsLock status from local storage
 let capsLockPressed = JSON.parse(localStorage.getItem('caps-press'));
 
 if (!capsLockPressed) {
@@ -111,7 +111,11 @@ const tab = keys[14];
 tab.classList.add('tab');
 const capsLock = keys[28];
 capsLock.classList.add('caps-lock', 'additional');
-(capsLockPressed === true) ? capsLock.classList.add('key-press') : capsLock.classList.remove('key-press');
+if (capsLockPressed === true) {
+  capsLock.classList.add('key-press');
+} else {
+  capsLock.classList.remove('key-press');
+}
 const enter = keys[40];
 enter.classList.add('enter');
 const shiftLeft = keys[41];
@@ -148,6 +152,8 @@ function lightButtons(event) {
         case keyCodes[i]:
           keys[i].classList.toggle('key-press');
           break;
+
+        default:
       }
     }
   }
@@ -219,7 +225,6 @@ function capsLockCase(event) {
 
 function changeLanguage(event) {
   if ((event.ctrlKey) && (event.altKey)) {
-    // event.preventDefault();
     if (keys[15].innerHTML === 'q') {
       currentLanguage = [...ruLowercase];
       localStorage.setItem('lang', JSON.stringify(currentLanguage));
@@ -254,8 +259,6 @@ function changeLanguage(event) {
   }
 }
 
-// document.addEventListener('keypress', changeLanguage)
-
 document.addEventListener('keydown', (event) => {
   changeLanguage(event);
   lightButtons(event);
@@ -264,11 +267,11 @@ document.addEventListener('keydown', (event) => {
 
   if (event.code === 'Tab') {
     event.preventDefault();
-    let cursorPosition = textArea.selectionStart;
-    const beforeText = textArea.value.slice(0, cursorPosition);
-    const afterText = textArea.value.slice(cursorPosition);
-    textArea.value = `${beforeText}\t${afterText}`;
-    cursorPosition += 1;
+    let cursor = textArea.selectionStart;
+    const prevText = textArea.value.slice(0, cursor);
+    const nextText = textArea.value.slice(cursor);
+    textArea.value = `${prevText}\t${nextText}`;
+    cursor += 1;
   }
 });
 
@@ -280,7 +283,7 @@ document.addEventListener('keyup', (event) => {
 
 // virtual keyboard input
 
-function virtualKeyboardInput(event) {
+function virtualCapsLock(event) {
   if (event.target.classList.contains('caps-lock')) {
     if (!event.target.classList.contains('key-press')) {
       capsLock.classList.add('key-press');
@@ -318,56 +321,58 @@ function virtualKeyboardInput(event) {
       }
     }
   }
+}
 
-  let cursorPosition = textArea.selectionStart;
-  const cursorPositionEnd = textArea.selectionEnd;
-  const beforeText = textArea.value.slice(0, cursorPosition);
-  const afterText = textArea.value.slice(cursorPosition);
+function virtualKeyboardInput(event) {
+  virtualCapsLock(event);
 
-  if (event.target.tagName === 'BUTTON' && event.target.classList.contains('additional') === false) {
+  let cursor = textArea.selectionStart;
+  const cursorEnd = textArea.selectionEnd;
+  const prevText = textArea.value.slice(0, cursor);
+  const nextText = textArea.value.slice(cursor);
+
+  if (event.target.tagName === 'BUTTON' && (!event.target.classList.contains('additional'))) {
     textArea.value += event.target.innerHTML;
-    cursorPosition += 1;
-  }
-
-  if (event.target.classList.contains('enter')) {
-    textArea.value = `${beforeText}\n${afterText}`;
-    cursorPosition += 1;
-  }
-
-  if (event.target.classList.contains('tab')) {
-    textArea.value = `${beforeText}\t${afterText}`;
-    cursorPosition += 1;
+    cursor += 1;
   }
 
   if (event.target.classList.contains('arrow-up')) {
-    cursorPosition -= 5;
+    cursor -= prevText.length;
   }
 
   if (event.target.classList.contains('arrow-down')) {
-    cursorPosition += 5;
+    cursor += nextText.length;
   }
 
   if (event.target.classList.contains('arrow-left')) {
-    cursorPosition -= 1;
+    cursor -= 1;
   }
 
   if (event.target.classList.contains('arrow-right')) {
-    cursorPosition += 1;
+    cursor += 1;
+  }
+
+  if (event.target.classList.contains('enter')) {
+    textArea.value = `${prevText}\n${nextText}`;
+    cursor += 1;
+  }
+
+  if (event.target.classList.contains('tab')) {
+    textArea.value = `${prevText}\t${nextText}`;
+    cursor += 1;
   }
 
   if (event.target.classList.contains('backspace')) {
-    if (cursorPositionEnd > cursorPosition) {
-      textArea.value = textArea.value.slice(0, cursorPosition) + textArea.value.slice(cursorPositionEnd);
+    if (cursorEnd > cursor) {
+      textArea.value = textArea.value.slice(0, cursor) + textArea.value.slice(cursorEnd);
     } else {
-      textArea.value = beforeText.slice(0, -1) + afterText;
-      cursorPosition = cursorPosition > 0 ? cursorPosition - 1 : 0;
+      textArea.value = prevText.slice(0, -1) + nextText;
+      cursor = cursor > 0 ? cursor - 1 : 0;
     }
   }
 
-  textArea.selectionStart = cursorPosition;
-  textArea.selectionEnd = cursorPosition;
-
-  textArea.blur();
+  textArea.selectionStart = cursor;
+  textArea.selectionEnd = cursor;
   textArea.focus();
 }
 
@@ -384,28 +389,10 @@ function virtualKeyboardPress(event) {
   } else
 
   if (event.target.tagName === 'BUTTON') {
-    if (event.target.classList.contains('capsLock')) {
+    if (event.target.classList.contains('caps-lock')) {
       return;
     }
     event.target.classList.add('key-press');
-  }
-
-  if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
-    if (keys[15].innerHTML === 'q') {
-      fillButtons(enUppercase);
-    }
-
-    if (keys[15].innerHTML === 'й') {
-      fillButtons(ruUppercase);
-    }
-
-    if (keys[15].innerHTML === 'Q') {
-      fillButtons(enLowercaseArray);
-    }
-
-    if (keys[15].innerHTML === 'Й') {
-      fillButtons(ruLowercase);
-    }
   }
 }
 keyboard.addEventListener('mousedown', virtualKeyboardPress);
@@ -421,30 +408,10 @@ function virtualKeyboardOut(event) {
   } else
 
   if (event.target.tagName === 'BUTTON') {
-    if (event.target.classList.contains('capsLock')) {
+    if (event.target.classList.contains('caps-lock')) {
       return;
     }
     event.target.classList.remove('key-press');
-  }
-
-  if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
-    if (keys[15].innerHTML === 'Q') {
-      fillButtons(enLowercaseArray);
-    }
-
-    if (keys[15].innerHTML === 'Й') {
-      fillButtons(ruLowercase);
-    }
-
-    if (keys[15].innerHTML === 'q') {
-      fillButtons(enUppercase);
-    }
-
-    if (keys[15].innerHTML === 'й') {
-      fillButtons(ruUppercase);
-    }
-
-    // (keys[15].innerHTML === 'Q') ? fillButtons(enLowercaseArray) : fillButtons(ruLowercase);
   }
 }
 
