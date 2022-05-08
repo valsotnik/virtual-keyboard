@@ -1,6 +1,7 @@
 import './styles/style.css';
 
 const { body } = document;
+
 const wrapper = document.createElement('div');
 
 wrapper.classList.add('wrapper');
