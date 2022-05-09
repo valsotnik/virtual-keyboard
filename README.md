@@ -4,7 +4,7 @@
 - Для сборки проекта использовался webpack, а так же ESLint с конфигом (eslint-config-airbnb-base).
 - Файл package.json содержит все необходимые зависимости для установки и дальнейшей проверки.
 
-## Самопроверка: ниже приведены требования и мои комментарии
+## Самопроверка:
 ### Score: 110 / 110
 * the generation of DOM elements is implemented. body in the index.html is empty (can contain only script tag): (20/20)
 
